@@ -1,0 +1,42 @@
+№1 Ошибка в параметризации теста list_to_string
+
+Описание:
+При попытке выполнить тестирование утилиты класса StringUtils с помощью pytest,
+тесты завершаются ошибкой из-за неправильного количества параметров, передаваемых в декоратор @pytest.mark.parametrize.
+
+Шаги для воспроизведения:
+1 Создать файл test_string_utils.py с тестами для метода list_to_string класса StringUtils.
+2 Вставить следующий код:
+
+import pytest
+from string_utils import StringUtils
+
+processor = StringUtils()
+
+@pytest.mark.parametrize(
+    "input_list, joiner, expected_output",
+    [
+        ([10, 20, 30, 40], "10, 20, 30, 40"),
+        (["Hello", "Bye"], "Hello, Bye"),
+    ],
+)
+def test_process_positive_09(input_list, joiner, expected_output):
+    assert processor.list_to_string(input_list, joiner) == expected_output
+
+3 Запустить тесты с помощью команды pytest.
+
+Ожидаемое поведение:
+Составленные тесты прошли успешно, без обязательного добавления параметра `joiner`.
+
+Фактическое поведение:
+Появляется ошибка, указывающая на несоответствие количества параметров:
+
+ERROR collecting test_string_utils.py In 'parametrize' the number of names (3):
+['input_list', 'joiner', 'expected_output'] must be equal to the number of values (2):
+(['Hello', 'Bye'], 'Hello, Bye')
+```
+Дополнительная информация:
+
+Python версия: 3.12.1
+pytest версия: 8.3.4
+ОС: Windows
