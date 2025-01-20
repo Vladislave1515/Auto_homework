@@ -5,15 +5,17 @@ from selenium.webdriver.support import expected_conditions as EC
 
 driver = webdriver.Chrome()
 
-driver.get("http://uitestingplayground.com/ajax")
+try:
+    driver.get("http://uitestingplayground.com/ajax")
 
-blue_button = driver.find_element(By.CSS_SELECTOR, "#ajaxButton")
-blue_button.click()
+    blue_button = driver.find_element(By.CSS_SELECTOR, "#ajaxButton")
+    blue_button.click()
 
-wait = WebDriverWait(driver, 20)
-green_message = wait.until(EC.visibility_of_element_located(
-    (By.CSS_SELECTOR, "#content > p")))
+    wait = WebDriverWait(driver, 20)
+    green_message = wait.until(EC.visibility_of_element_located(
+        (By.CSS_SELECTOR, "#content > p")))
 
-print(green_message.text)
+    print(green_message.text)
 
-driver.quit()
+finally:
+    driver.quit()
