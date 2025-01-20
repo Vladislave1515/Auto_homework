@@ -8,11 +8,11 @@ driver = webdriver.Chrome()
 try:
     driver.get(
         "https://bonigarcia.dev/selenium-webdriver-java/loading-images.html"
-        )
+    )
 
     wait = WebDriverWait(driver, 20)
     third_image = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "img:nth-of-type(3)"))
+        EC.presence_of_element_located((By.ID, "award"))
     )
 
     third_image_src = third_image.get_attribute("src")

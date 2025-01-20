@@ -5,18 +5,16 @@ from selenium.webdriver.support import expected_conditions as EC
 
 driver = webdriver.Chrome()
 
-try:
-    driver.get("http://uitestingplayground.com/textinput")
+driver.get("http://uitestingplayground.com/textinput")
 
-    input_field = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "newButtonName"))
-    )
-    input_field.send_keys("SkyPro")
+input_field = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.ID, "newButtonName"))
+)
+input_field.send_keys("SkyPro")
 
-    blue_button = driver.find_element(By.ID, "updatingButton")
-    blue_button.click()
+blue_button = driver.find_element(By.ID, "updatingButton")
+blue_button.click()
 
-    print(blue_button.text)
+print(blue_button.text)
 
-finally:
-    driver.quit()
+driver.quit()
