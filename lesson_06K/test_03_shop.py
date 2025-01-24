@@ -1,48 +1,48 @@
+import pytest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-driver = webdriver.Chrome()
 
-driver.get("https://www.saucedemo.com/")
+@pytest.fixture
+def driver():
+    driver = webdriver.Chrome()
+    yield driver
+    driver.quit()
 
-wait = WebDriverWait(driver, 5)
 
-username = wait.until(EC.presence_of_element_located((By.ID, "user-name")))
-username.send_keys("standard_user")
-password = driver.find_element(By.ID, "password")
-password.send_keys("secret_sauce")
-login_button = driver.find_element(By.ID, "login-button")
-login_button.click()
+def test_purchase_flow(driver):
+    wait = WebDriverWait(driver, 5)
 
-wait.until(EC.element_to_be_clickable(
-    (By.XPATH, "//*[@id='add-to-cart-sauce-labs-backpack']"))).click()
-wait.until(EC.element_to_be_clickable(
-    (By.XPATH, "//*[@id='add-to-cart-sauce-labs-bolt-t-shirt']"))).click()
-wait.until(EC.element_to_be_clickable(
-    (By.XPATH, "//*[@id='add-to-cart-sauce-labs-onesie']"))).click()
+    driver.get("https://www.saucedemo.com/")
+    wait.until(EC.presence_of_element_located(
+        (By.ID, "user-name"))).send_keys("standard_user")
+    driver.find_element(By.ID, "password").send_keys("secret_sauce")
+    driver.find_element(By.ID, "login-button").click()
 
-cart = driver.find_element(By.ID, "shopping_cart_container")
-cart.click()
+    items = [
+        "add-to-cart-sauce-labs-backpack",
+        "add-to-cart-sauce-labs-bolt-t-shirt",
+        "add-to-cart-sauce-labs-onesie"
+    ]
+    for item in items:
+        wait.until(EC.element_to_be_clickable((By.ID, item))).click()
 
-checkout_button = wait.until(EC.element_to_be_clickable((By.ID, "checkout")))
-checkout_button.click()
+    driver.find_element(By.ID, "shopping_cart_container").click()
+    driver.find_element(By.ID, "checkout").click()
 
-first_name = wait.until(EC.presence_of_element_located((By.ID, "first-name")))
-first_name.send_keys("Влад")
-last_name = driver.find_element(By.ID, "last-name")
-last_name.send_keys("Рыбас")
-postal_code = driver.find_element(By.ID, "postal-code")
-postal_code.send_keys("12345")
+    driver.find_element(By.ID, "first-name").send_keys("Влад")
+    driver.find_element(By.ID, "last-name").send_keys("Рыбас")
+    driver.find_element(By.ID, "postal-code").send_keys("12345")
+    driver.find_element(By.ID, "continue").click()
 
-continue_button = driver.find_element(By.ID, "continue")
-continue_button.click()
+    total_element = wait.until(EC.presence_of_element_located(
+        (By.CLASS_NAME, "summary_total_label")))
+    total = total_element.text
 
-total_element = wait.until(EC.presence_of_element_located(
-    (By.CLASS_NAME, "summary_total_label")))
-total = total_element.text
+    driver.quit()
 
-driver.quit()
-
-assert total == "Total: $58.29", f"Ожидаемая сумма: $58,29, получилось {total}"
+    assert total == "Total: $58.29", f"Ожидаемая сумма: $58,29, получилось {
+        total
+        }"
