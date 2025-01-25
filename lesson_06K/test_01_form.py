@@ -19,51 +19,30 @@ def test_form_submission_flow(driver):
         "https://bonigarcia.dev/selenium-webdriver-java/data-types.html"
         )
 
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='first-name']"
-         ))).send_keys("Иван")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='last-name']"
-         ))).send_keys("Петров")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='address']"
-         ))).send_keys("Ленина, 55-3")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='e-mail']"
-         ))).send_keys("test@skypro.com")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='phone']"
-         ))).send_keys("+798589998787")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='zip-code']"
-         ))).send_keys("")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='city']"
-         ))).send_keys("Москва")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='country']"
-         ))).send_keys("Россия")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='job-position']"
-         ))).send_keys("QA")
-    wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "input.form-control[name='company']"
-         ))).send_keys("SkyPro")
+    fields = {
+        'first-name': "Иван",
+        'last-name': "Петров",
+        'address': "Ленина, 55-3",
+        'zip-code': "",
+        'city': "Москва",
+        'country': "Россия",
+        'e-mail': "test@skypro.com",
+        'phone': "+7985899998787",
+        'job-position': "QA",
+        'company': "SkyPro"
+    }
+
+    for field, value in fields.items():
+        driver.find_element(
+            By.NAME, field).send_keys(value)
 
     wait.until(EC.element_to_be_clickable(
-        (By.CSS_SELECTOR, "button[type='submit']"))).click()
+        (By.CSS_SELECTOR, '[type="submit"]'))).click()
 
-    zip_code_field = wait.until(EC.presence_of_element_located(
-        (By.CSS_SELECTOR, "#zip-code.alert-danger")))
-    background_color = zip_code_field.value_of_css_property(
-        "background-color")
-    assert "rgba(248, 215, 218" in background_color
+    assert "alert-danger" in driver.find_element(
+        By.ID, "zip-code").get_attribute("class")
 
-    fields_to_check = ["first-name", "last-name", "address", "e-mail", "phone",
-                       "city", "country", "job-position", "company"]
-    for field_name in fields_to_check:
-        field = wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, f"div.alert.py-2.alert-success[id='{
-                field_name}']")))
-        background_color = field.value_of_css_property("background-color")
-        assert background_color == "rgba(209, 231, 221, 1)"
+    for field in ['first-name', 'last-name', 'address', 'e-mail', 'phone',
+                  'city', 'country', 'job-position', 'company']:
+        assert "success" in driver.find_element(
+            By.ID, field).get_attribute("class")

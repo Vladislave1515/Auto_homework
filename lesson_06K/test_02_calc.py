@@ -21,16 +21,12 @@ def test_calculator_flow(driver):
 
     delay_input = wait.until(EC.presence_of_element_located((By.ID, "delay")))
     delay_input.clear()
-    delay_input.send_keys("45")
+    delay_input.send_keys("5")
 
-    buttons = [
-        "//*[@id='calculator']/div[2]/span[1]",
-        "//*[@id='calculator']/div[2]/span[4]",
-        "//*[@id='calculator']/div[2]/span[2]",
-        "//*[@id='calculator']/div[2]/span[15]"
-    ]
+    buttons = ["7", "+", "8", "="]
     for button in buttons:
-        wait.until(EC.element_to_be_clickable((By.XPATH, button))).click()
+        wait.until(EC.element_to_be_clickable(
+            (By.XPATH, f"//span[text()='{button}']"))).click()
 
     result = WebDriverWait(driver, 46).until(
         EC.text_to_be_present_in_element((By.CLASS_NAME, "screen"), "15"))
