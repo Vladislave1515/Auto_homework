@@ -41,3 +41,18 @@ class FormPage:
             EC.presence_of_element_located((
                 By.ID, field_id))).get_attribute("class")
         return element
+
+    def check_zip_code_error(self):
+        return "alert-danger" in self.get_field_class("zip-code")
+
+    def check_fields_success(self):
+        fields = ['first-name', 'last-name', 'address', 'e-mail', 'phone',
+                  'city', 'country', 'job-position', 'company']
+        for field in fields:
+            if "success" not in self.get_field_class(field):
+                return False
+        return True
+
+    def check_form_submission(self):
+        assert self.check_zip_code_error()
+        assert self.check_fields_success()

@@ -13,4 +13,9 @@ class CheckViewPage:
             EC.presence_of_element_located((
                 By.CLASS_NAME, "summary_total_label"))
         )
-        return total_element.text
+        total = total_element.text
+        expected_total = "Total: $58.29"
+        assert total == expected_total, (
+            f"Ожидаемая сумма: {expected_total}, получилось: {total}"
+        )
+        return total
