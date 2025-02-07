@@ -17,7 +17,8 @@ class ProjectAPI:
     # POST Методы
     def create_project(self, payload):
         url = f"{self.BASE_URL}/projects"
-        response = requests.post(url, json=payload, headers=self.get_headers())
+        response = requests.post(url, json=payload,
+                                 headers=self.get_headers())
         return response
 
     def check_response(self, response, expected_status_code, key=None):
@@ -37,7 +38,8 @@ class ProjectAPI:
             'users': {user_id: role}
         }
         response = self.create_project(payload)
-        print(f"Response status: {response.status_code}, response content: {response.json()}")
+        print(f"Response status: {response.status_code}, "
+              f"response content: {response.json()}")
         self.extract_project_id(response)
 
     def create_project_with_roles(self, user_id, roles):
@@ -87,7 +89,8 @@ class ProjectAPI:
     # GET Методы
     def get_projects(self, params=None):
         url = f"{self.BASE_URL}/projects"
-        response = requests.get(url, headers=self.get_headers(), params=params)
+        response = requests.get(url, headers=self.get_headers(),
+                                params=params)
         return response
 
     def check_get_projects(self):
@@ -148,23 +151,25 @@ class ProjectAPI:
         self.check_response(response, 200)
         project_ids = [project['id'] for project in response.json()['content']]
         assert len(project_ids) > 0, "No project IDs found"
-        self.project_ids.extend(project_ids)  # Добавляем найденные ID проектов в список
+        self.project_ids.extend(project_ids)
         self.check_get_project_by_id(project_ids[0])
 
     # PUT Методы
 
     def update_project(self, project_id, payload):
         url = f"{self.BASE_URL}/projects/{project_id}"
-        response = requests.put(url, json=payload, headers=self.get_headers())
+        response = requests.put(url, json=payload,
+                                headers=self.get_headers())
         return response
 
-    def check_update_project(self, project_id=None, update_payload=None):
+    def check_update_project(self, project_id=None,
+                             update_payload=None):
         if project_id is None:
             if len(self.project_ids) > 0:
-                project_id = self.project_ids[-1]  # Используем последний созданный проект
+                project_id = self.project_ids[-1]
             else:
-                raise ValueError("Список project_ids пуст. Невозможно обновить проект без ID.")
-
+                raise ValueError("Список project_ids пуст. "
+                                 "Невозможно обновить проект без ID.")
         if update_payload is None:
             update_payload = {}
 
@@ -176,18 +181,17 @@ class ProjectAPI:
         )
         assert json_response['id'] == project_id
 
-    def check_update_project_invalid_id(
-            self, invalid_project_id, update_payload
-            ):
+    def check_update_project_invalid_id(self, invalid_project_id,
+                                        update_payload):
         response = self.update_project(invalid_project_id, update_payload)
         json_response = response.json()
         self.check_response(response, 404)
         assert 'error' in json_response
 
-    def check_update_project_nonexistent_id(
-            self, nonexistent_project_id, update_payload
-            ):
-        response = self.update_project(nonexistent_project_id, update_payload)
+    def check_update_project_nonexistent_id(self, nonexistent_project_id,
+                                            update_payload):
+        response = self.update_project(nonexistent_project_id,
+                                       update_payload)
         json_response = response.json()
         self.check_response(response, 404)
         assert 'error' in json_response
