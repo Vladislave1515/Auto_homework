@@ -37,6 +37,7 @@ class ProjectAPI:
             'users': {user_id: role}
         }
         response = self.create_project(payload)
+        print(f"Response status: {response.status_code}, response content: {response.json()}")
         self.extract_project_id(response)
 
     def create_project_with_roles(self, user_id, roles):
@@ -147,15 +148,26 @@ class ProjectAPI:
         self.check_response(response, 200)
         project_ids = [project['id'] for project in response.json()['content']]
         assert len(project_ids) > 0, "No project IDs found"
+        self.project_ids.extend(project_ids)  # Добавляем найденные ID проектов в список
         self.check_get_project_by_id(project_ids[0])
 
     # PUT Методы
+
     def update_project(self, project_id, payload):
         url = f"{self.BASE_URL}/projects/{project_id}"
         response = requests.put(url, json=payload, headers=self.get_headers())
         return response
 
-    def check_update_project(self, project_id, update_payload):
+    def check_update_project(self, project_id=None, update_payload=None):
+        if project_id is None:
+            if len(self.project_ids) > 0:
+                project_id = self.project_ids[-1]  # Используем последний созданный проект
+            else:
+                raise ValueError("Список project_ids пуст. Невозможно обновить проект без ID.")
+
+        if update_payload is None:
+            update_payload = {}
+
         response = self.update_project(project_id, update_payload)
         json_response = response.json()
         self.check_response(response, 200)

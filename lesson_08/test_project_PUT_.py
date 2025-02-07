@@ -8,10 +8,10 @@ project_api = ProjectAPI(
 
 @pytest.mark.run(order=4)
 def test_update_project_positive():
+    project_api.create_project_with_role('worker', 'f92aabc1-2754-403d-a238-f722107e3595')
     project_api.get_and_check_first_project()
     update_payload = {'title': 'Обновленный проект'}
-    project_api.check_update_project(project_api.project_ids[0],
-                                     update_payload)
+    project_api.check_update_project(update_payload=update_payload)  # Обновляем проект без явного указания ID
 
 
 @pytest.mark.run(order=4)
